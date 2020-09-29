@@ -13,7 +13,7 @@ library(readxl)
 
 ## Problem 1
 
-Define the path to the Mr. Trash Wheel dataset.
+Define a path to the Mr. Trash Wheel dataset.
 
 ```{r}
 path_trash_wheel = "./Trash-Wheel-Collection-Totals-8-6-19.xlsx"
@@ -86,3 +86,36 @@ The combined precipitation dataset of 2017 and 2018 contains precipitation data 
 
 * The total precipitation in 2018 was `r precipitation_combine %>% filter(year == 2018) %>% pull(total) %>% sum()` inches.
 * The median number of sports balls in a dumpster in 2017 was `r trashwheel_df %>% filter(year == 2017) %>% pull(sports_balls) %>% median()`.
+
+## Problem 2
+
+Define a path to the NYC subway transit dataset.
+
+```{r}
+path_NYC_subway = "./NYC_Transit_Subway_Entrance_And_Exit_Data.csv"
+```
+
+Read and clean the NYC subway transit dataset. Then only retain variables needed.
+
+```{r}
+NYC_subway_df = 
+  read_csv(path_NYC_subway) %>% 
+  janitor::clean_names() %>% 
+  select(line:entrance_type, entry, vending, ada) %>% 
+  mutate(entry = as.logical(
+    ifelse(entry == "YES", 1, 0)
+  ))
+```
+
+The resulting dataset of NYC subway transit `NYC_subway_df` only keeps variables like line, station name, latitude and longitude of station, routes served, entry, vending, entrance type, and ADA compliance.
+
+The variable `entry` is converted to a logical variable.
+
+There are `r nrow(NYC_subway_df)` rows and `r ncol(NYC_subway_df)` columns in the resulting dataset of NYC subway transit `NYC_subway_df`.
+
+The data in `NYC_subway_df` are still not tidy. There are still redundant columns for routes served, or the route numbers that should be values are still in the variable names.
+
+* There are `r NYC_subway_df %>% distinct(line, station_name) %>% nrow()` distinct stations.
+* There are `r NYC_subway_df %>% filter(ada == TRUE) %>% distinct(line, station_name) %>% nrow()` ADA compliant stations.
+* `r nrow(filter(NYC_subway_df, entry == TRUE & vending == "NO"))/nrow(filter(NYC_subway_df, vending == "NO"))*100`% of station entrances / exits without vending allow entrance.
+
