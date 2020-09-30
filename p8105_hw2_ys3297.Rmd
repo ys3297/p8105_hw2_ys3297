@@ -119,3 +119,19 @@ The data in `NYC_subway_df` are still not tidy. There are still redundant column
 * There are `r NYC_subway_df %>% filter(ada == TRUE) %>% distinct(line, station_name) %>% nrow()` ADA compliant stations.
 * `r nrow(filter(NYC_subway_df, entry == TRUE & vending == "NO"))/nrow(filter(NYC_subway_df, vending == "NO"))*100`% of station entrances / exits without vending allow entrance.
 
+Reformat `NYC_subway_df` to make route number and route name distinct variables.
+
+```{r}
+NYC_subway_df = 
+  NYC_subway_df %>% 
+  mutate_at(vars(route8:route11), as.character) %>% 
+  pivot_longer(
+    route1:route11,
+    names_to = "route_number",
+    names_prefix = "route",
+    values_to = "route_name"
+  )
+```
+
+* `r NYC_subway_df %>% filter(route_name == "A") %>% distinct(line, station_name) %>% nrow()` distinct stations serve the A train.
+* Of the stations that serve the A train, `r NYC_subway_df %>% filter(route_name == "A" & ada == TRUE) %>% distinct(line, station_name) %>% nrow()` distinct stations are ADA compliant.
