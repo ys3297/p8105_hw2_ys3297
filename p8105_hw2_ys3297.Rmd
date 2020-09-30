@@ -156,3 +156,21 @@ pols_month_df =
   select(-c(prez_gop, prez_dem))
 ```
 
+Define a path to the snp dataset.
+
+```{r}
+path_to_snp = "./data_538/snp.csv"
+```
+
+Read and clean the pols-month dataset.
+
+```{r}
+snp_df = 
+  read_csv(path_to_snp) %>% 
+  janitor::clean_names() %>% 
+  separate(date, c("month", "day", "year"), "/", convert = TRUE) %>% 
+  arrange(year, month) %>% 
+  mutate(month = month.name[month]) %>% 
+  relocate(year, month)
+```
+
