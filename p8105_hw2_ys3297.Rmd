@@ -95,7 +95,7 @@ Define a path to the NYC subway transit dataset.
 path_NYC_subway = "./NYC_Transit_Subway_Entrance_And_Exit_Data.csv"
 ```
 
-Read and clean the NYC subway transit dataset. Then only retain variables needed.
+Read and clean the NYC subway transit dataset, only retaining variables needed.
 
 ```{r}
 NYC_subway_df = 
@@ -135,3 +135,24 @@ NYC_subway_df =
 
 * `r NYC_subway_df %>% filter(route_name == "A") %>% distinct(line, station_name) %>% nrow()` distinct stations serve the A train.
 * Of the stations that serve the A train, `r NYC_subway_df %>% filter(route_name == "A" & ada == TRUE) %>% distinct(line, station_name) %>% nrow()` distinct stations are ADA compliant.
+
+## Problem 3
+
+Define a path to the pols-month dataset.
+
+```{r}
+path_to_pols_month = "./data_538/pols-month.csv"
+```
+
+Read and clean the pols-month dataset.
+
+```{r}
+pols_month_df = 
+  read_csv(path_to_pols_month) %>% 
+  janitor::clean_names() %>% 
+  separate(mon, c("year", "month", "day"), "-", convert = TRUE) %>% 
+  mutate(month = month.name[month]) %>% 
+  mutate(president = ifelse(prez_gop == 1, "gop", "dem")) %>% 
+  select(-c(prez_gop, prez_dem))
+```
+
